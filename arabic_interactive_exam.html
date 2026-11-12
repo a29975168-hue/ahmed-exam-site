@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الامتحان التفاعلي | اللغة العربية</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#17243a;--muted:#65738a;--primary:#2457a7;--primary2:#173f7d;--line:#dce4ef;--good:#16834b;--bad:#c33b3b}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#edf3fb,#f8faff);font-family:Tahoma,Arial,sans-serif;color:var(--ink);min-height:100vh}
+.wrap{max-width:900px;margin:0 auto;padding:22px 15px 40px}.brand{text-align:center;margin:10px 0 22px}.brand h1{font-size:clamp(23px,4vw,34px);margin:0 0 8px;color:var(--primary2)}.brand p{margin:0;color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,4vw,32px);box-shadow:0 12px 35px #193c6810}
+.hidden{display:none!important}.intro{text-align:center}.intro h2{margin-top:0}.intro input{width:100%;max-width:420px;padding:14px;border:1px solid #bdcadd;border-radius:12px;font-size:17px;text-align:center;margin:12px 0}
+button{border:0;border-radius:12px;padding:12px 22px;font-size:16px;font-weight:bold;cursor:pointer;transition:.15s}button:disabled{opacity:.4;cursor:not-allowed}.primary{background:var(--primary);color:#fff}.primary:hover{background:var(--primary2)}.secondary{background:#eaf0f8;color:#24456f}.danger{background:#a83232;color:#fff}
+.exam-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin-bottom:14px}.progress{height:9px;background:#e8edf5;border-radius:20px;overflow:hidden;margin-bottom:22px}.progress span{display:block;height:100%;background:linear-gradient(90deg,#3677ce,#1b4c91);width:0;transition:.2s}
+.passage{background:#f2f6fc;border-right:4px solid var(--primary);border-radius:12px;padding:16px 18px;line-height:2;font-size:17px;margin-bottom:20px}.passage strong{color:var(--primary2)}.qtype{color:var(--primary);font-weight:bold;font-size:14px;margin-bottom:8px}.question{font-size:21px;line-height:1.8;margin:0 0 18px}.options{display:grid;gap:11px}.option{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:13px;padding:13px 15px;cursor:pointer;line-height:1.6;background:#fff}.option:hover{border-color:#8eacd5;background:#f8fbff}.option input{accent-color:var(--primary);width:18px;height:18px;flex-shrink:0}.option.selected{border-color:var(--primary);background:#eef5ff}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:25px;flex-wrap:wrap}.nav .right{display:flex;gap:9px}
+.note{color:var(--muted);font-size:13px;margin-top:15px}.result{text-align:center}.score{font-size:48px;font-weight:bold;color:var(--primary);margin:10px}.review-item{border:1px solid var(--line);border-radius:13px;padding:15px;margin:12px 0;text-align:right}.review-item.correct{border-right:5px solid var(--good)}.review-item.wrong{border-right:5px solid var(--bad)}.review-item h3{font-size:17px;margin:0 0 10px;line-height:1.7}.review-item p{margin:7px 0;line-height:1.7}.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold}.tag.good{background:#e5f6ed;color:var(--good)}.tag.bad{background:#ffeded;color:var(--bad)}
+footer{text-align:center;color:#8290a4;font-size:13px;margin-top:24px}
+@media(max-width:520px){.nav button{flex:1}.question{font-size:19px}.passage{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="brand"><h1>الامتحان التفاعلي في اللغة العربية</h1><p>النصوص والقواعد النحوية</p></header>
+<section id="start" class="panel intro">
+<h2>أهلاً بك في الاختبار</h2>
+<p>اكتب اسمك أولاً، ثم ابدأ الإجابة عن الأسئلة.</p>
+<input id="studentName" type="text" maxlength="60" placeholder="اكتب اسم الطالب" autocomplete="name">
+<br><button class="primary" id="startBtn">ابدأ الاختبار</button>
+<p class="note">لن تظهر صحة إجاباتك أو الإجابات النموذجية إلا بعد تسليم الاختبار.</p>
+</section>
+<section id="exam" class="panel hidden">
+<div class="exam-top"><span id="studentLabel"></span><span id="counter"></span></div>
+<div class="progress"><span id="progressBar"></span></div>
+<div id="passage" class="passage hidden"></div>
+<div id="qtype" class="qtype"></div>
+<h2 id="question" class="question"></h2>
+<div id="options" class="options"></div>
+<div class="nav">
+<button id="prevBtn" class="secondary">السابق</button>
+<div class="right"><button id="nextBtn" class="primary">التالي</button><button id="submitBtn" class="danger hidden">تسليم الاختبار</button></div>
+</div>
+<p class="note">يمكنك التنقل بين الأسئلة وتعديل إجاباتك قبل التسليم.</p>
+</section>
+<section id="result" class="panel result hidden">
+<h2>انتهى الاختبار</h2><p id="resultName"></p>
+<div class="score" id="score"></div><p id="percent"></p>
+<p id="summary"></p>
+<button class="primary" id="reviewBtn">مراجعة الاختبار</button>
+<button class="secondary" id="restartBtn">إعادة الاختبار – محاولة جديدة</button>
+</section>
+<section id="review" class="panel hidden">
+<div class="exam-top"><strong>مراجعة الاختبار</strong><span id="reviewScore"></span></div>
+<div id="reviewList"></div>
+<button class="secondary" id="backResultBtn">العودة إلى النتيجة</button>
+</section>
+<footer>جميع حقوق النشر محفوظة © أحمد عماد</footer>
+</div>
+<script>
+const passages = {
+p1:{title:"النص الأول: من درس (صقور الوطنية)",text:"«إن لوطننا مصر منذ فجر التاريخ درعاً يحميه وسيفاً يصونه، فإن رجال الشرطة هم حصنها المنيع في الداخل يذودون عنها في وجه الفتن ويحمون أمنها من شرور المتربصين بها.»"},
+p2:{title:"النص الثاني: من درس (العبور إلى المستقبل)",text:"«ثم جاءت لحظة العبور لحظة النصر حين صاحت الأرض بنداء الوطن فلبى أبطالها النداء... ولكن بعقول مصرية وقلوب لا تعرف الخوف تم تعطيلها.»"},
+p3:{title:"النص الثالث: من نص (مصر التي في خاطري)",text:"«تحيا لنا عزيزة في الأمم... ونفتديها بالعزيز الأكرم.»"}
+};
+const questions = [
+{p:"p1",type:"اختيار من متعدد",q:'مرادف كلمة "يذودون":',o:["يهاجمون","يدافعون","يهربون","يراقبون"],a:1,why:"يذودون تعني يدافعون ويحامون."},
+{p:"p1",type:"اختيار من متعدد",q:'مفرد كلمة "شرور":',o:["شرير","مسرور","شر","شريان"],a:2,why:"مفرد شرور هو شر."},
+{p:"p1",type:"اختيار من متعدد",q:'مرادف كلمة "رصد" (من القطعة المرتبطة):',o:["إهمال وتجاهل","متابعة ومراقبة","تسجيل وتوثيق","إعلان ونشر"],a:1,why:"رصد تعني متابعة ومراقبة."},
+{p:"p1",type:"اختيار من متعدد",q:'مضاد كلمة "ثقة":',o:["يقين وثبات","شك وتردد","قوة وعزم","رضا وقبول"],a:1,why:"مضاد الثقة هو الشك والتردد."},
+{p:"p1",type:"صواب أو خطأ",q:"يقتصر دور حماية الوطن وتأمين حدوده على رجال الشرطة فقط في الداخل والخارج.",o:["صح","خطأ"],a:1,why:"خطأ؛ لا تقتصر حماية الوطن على رجال الشرطة، بل يتعاون الجميع لحمايته."},
+{p:"p1",type:"صواب أو خطأ",q:"الفكرة الفرعية للفقرة هي التصدي للفتن وحماية الأمن الداخلي للبلاد.",o:["صح","خطأ"],a:0,why:"العبارة صحيحة."},
+{p:"p2",type:"اختيار من متعدد",q:'مرادف كلمة "لبى":',o:["رفض وامتنع","سمع وأجاب النداء","استفسر وسأل","انتظر وتباطأ"],a:1,why:"لبّى النداء تعني سمعه وأجاب عنه."},
+{p:"p2",type:"صواب أو خطأ",q:"نجحت القوات المسلحة في تدمير خط بارليف في وقت توقعه العدو تماماً.",o:["صح","خطأ"],a:1,why:"خطأ؛ تم تدميره في وقت لم يتوقعه العدو."},
+{p:"p2",type:"صواب أو خطأ",q:"تحقق نصر أكتوبر بعد سنوات طويلة جداً من بدء المعركة الفاصلة.",o:["صح","خطأ"],a:1,why:"خطأ؛ تحقق النصر في ساعات قليلة."},
+{p:"p3",type:"اختيار من متعدد",q:'مرادف كلمة "نفتديها":',o:["نضحي من أجلها","نبتعد عنها","ننتقدها","نبيعها"],a:0,why:"نفتديها تعني نضحي من أجلها."},
+{p:"p3",type:"اختيار من متعدد",q:'مضاد كلمة "الأكرم":',o:["الأطول","الأقبح","الأذل / الأحقر","الأغنى"],a:2,why:"مضاد الأكرم: الأذل أو الأحقر."},
+{p:"p3",type:"صواب أو خطأ",q:"يوجه الشاعر النداء في الأبيات إلى الأعداء.",o:["صح","خطأ"],a:1,why:"خطأ؛ يوجه الشاعر النداء إلى أبناء وطنه مصر."},
+{p:"p3",type:"صواب أو خطأ",q:"يبرز البيتان قيمة وطنية عظمى وهي الاستعداد للتضحية بأغلى ما نملك.",o:["صح","خطأ"],a:0,why:"العبارة صحيحة."},
+{g:1,type:"صواب أو خطأ",q:"الفعل الماضي وفعل الأمر دائماً مبنيان في اللغة العربية.",o:["صح","خطأ"],a:0,why:"العبارة صحيحة؛ الفعل الماضي وفعل الأمر مبنيان."},
+{g:1,type:"صواب أو خطأ",q:"جميع الأسماء في اللغة العربية مبنية ولا يوجد أي اسم معرب نهائياً.",o:["صح","خطأ"],a:1,why:"خطأ؛ الأصل في الأسماء الإعراب، ومنها أسماء معربة وأسماء مبنية."},
+{g:1,type:"صواب أو خطأ",q:'اسما الإشارة "هذان" و"هاتان" يُعتبران من الأسماء المعربة وليست المبنية.',o:["صح","خطأ"],a:0,why:"العبارة صحيحة؛ هذان وهاتان يعربان إعراب المثنى."},
+{g:1,type:"صواب أو خطأ",q:"الفعل المضارع يُبنى دائماً في جميع أحواله ولا يأتي معرباً أبداً.",o:["صح","خطأ"],a:1,why:"خطأ؛ الأصل في المضارع الإعراب، ويُبنى في حالات محددة."},
+{g:1,type:"صواب أو خطأ",q:'الظروف "أمسِ، حيثُ، الآنَ" تُعتبر من الظروف المبنية.',o:["صح","خطأ"],a:0,why:"العبارة صحيحة؛ هذه الظروف مبنية."},
+{g:1,type:"صواب أو خطأ",q:"إذا اتصلت نون النسوة بالفعل المضارع فإنه يُبنى على الفتح.",o:["صح","خطأ"],a:1,why:"خطأ؛ يُبنى الفعل المضارع على السكون عند اتصاله بنون النسوة."},
+{g:1,type:"صواب أو خطأ",q:"علامات الإعراب الفرعية للأسماء تتمثل في الحروف (الواو، الألف، الياء).",o:["صح","خطأ"],a:0,why:"العبارة صحيحة؛ من علامات الإعراب الفرعية الحروف الواو والألف والياء."},
+{g:1,type:"اختيار من متعدد",q:'الفعل المضارع في العبارة "والله ليُنتصرَنَّ الحق" يُعرب:',o:["معرباً مرفوعاً بالضمة","مبنياً على الفتح لاتصاله بنون التوكيد","مبنياً على السكون لاتصاله بنون النسوة","مجزوماً وعلامة جزمه السكون"],a:1,why:"يُبنى المضارع على الفتح إذا اتصلت به نون التوكيد اتصالاً مباشراً."},
+{g:1,type:"اختيار من متعدد",q:"أي من الكلمات الآتية تُعد اسماً مبنياً؟",o:["الكتابُ","هوَ","المعلمون","المدرسةِ"],a:1,why:"هو ضمير، والضمائر من الأسماء المبنية."},
+{g:1,type:"اختيار من متعدد",q:"الأسماء الموصولة جميعها مبنية، عدا:",o:["الذي والتي","اللذان واللتان","الذين واللاتي","من وما"],a:1,why:"اللذان واللتان اسمان موصولان معربان إعراب المثنى."},
+{g:1,type:"اختيار من متعدد",q:'الفعل المضارع في جملة "الفتيات يكتبْنَ الدرس" يُبنى على:',o:["الفتح","الضم","السكون","الكسر"],a:2,why:"يبنى المضارع على السكون عند اتصاله بنون النسوة."},
+{g:1,type:"اختيار من متعدد",q:"الكلمة التي تُعرب بعلامة فرعية مما يلي هي:",o:["الطالبُ المجتهدُ","المعلمون الناجحون","الكتابَ المفيدَ","البيتِ الجميلِ"],a:1,why:"المعلمون والناجحون جمع مذكر سالم، وعلامة رفعه الواو."}
+];
+let current=0, answers=Array(questions.length).fill(null), student="", submitted=false, score=0;
+const $=id=>document.getElementById(id);
+function show(id){["start","exam","result","review"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+$("startBtn").onclick=()=>{student=$("studentName").value.trim();if(!student){alert("من فضلك اكتب اسمك أولاً.");$("studentName").focus();return;}$("studentLabel").textContent="الطالب: "+student;current=0;show("exam");render()};
+function render(){
+ const q=questions[current], passage=$("passage");
+ if(q.p){passage.classList.remove("hidden");passage.innerHTML="<strong>"+passages[q.p].title+"</strong><br>"+passages[q.p].text;}
+ else {passage.classList.add("hidden");passage.textContent="";}
+ $("counter").textContent=`السؤال ${current+1} من ${questions.length}`;
+ $("progressBar").style.width=((current+1)/questions.length*100)+"%";
+ $("qtype").textContent=q.g?"القواعد النحوية — "+q.type:q.type;
+ $("question").textContent=q.q;
+ $("options").innerHTML="";
+ q.o.forEach((opt,i)=>{let label=document.createElement("label");label.className="option"+(answers[current]===i?" selected":"");let radio=document.createElement("input");radio.type="radio";radio.name="answer";radio.checked=answers[current]===i;radio.onchange=()=>{answers[current]=i;renderOptions();};let span=document.createElement("span");span.textContent=["أ","ب","ج","د"][i]+" ) "+opt;label.append(radio,span);$("options").append(label);});
+ $("prevBtn").disabled=current===0;
+ $("nextBtn").classList.toggle("hidden",current===questions.length-1);
+ $("submitBtn").classList.toggle("hidden",current!==questions.length-1);
+}
+function renderOptions(){[...$("options").children].forEach((el,i)=>{el.classList.toggle("selected",answers[current]===i);el.querySelector("input").checked=answers[current]===i;});}
+$("prevBtn").onclick=()=>{if(current>0){current--;render();}};
+$("nextBtn").onclick=()=>{if(current<questions.length-1){current++;render();}};
+$("submitBtn").onclick=()=>{let unanswered=answers.filter(x=>x===null).length;if(unanswered&& !confirm(`لم تجب عن ${unanswered} سؤالاً. هل تريد تسليم الاختبار؟`))return; if(!confirm("هل أنت متأكد من تسليم الاختبار؟ لن تتمكن من تعديل الإجابات بعد التسليم."))return;submitted=true;score=questions.reduce((s,q,i)=>s+(answers[i]===q.a?1:0),0);$("resultName").textContent="اسم الطالب: "+student;$("score").textContent=`${score} / ${questions.length}`;$("percent").textContent=`النسبة المئوية: ${Math.round(score/questions.length*100)}٪`;$("summary").textContent=score>=questions.length*.85?"ممتاز! أداء رائع.":score>=questions.length*.65?"أحسنت، واصل المراجعة.":"يمكنك الاستفادة من مراجعة الإجابات والتدرب مرة أخرى.";show("result");};
+$("reviewBtn").onclick=()=>{buildReview();show("review");};
+$("backResultBtn").onclick=()=>show("result");
+function buildReview(){
+ $("reviewScore").textContent=`النتيجة: ${score}/${questions.length}`;
+ $("reviewList").innerHTML="";
+ questions.forEach((q,i)=>{let ok=answers[i]===q.a, box=document.createElement("div");box.className="review-item "+(ok?"correct":"wrong");let h=document.createElement("h3");h.textContent=`${i+1}. ${q.q}`;let yours=document.createElement("p");yours.textContent="إجابتك: "+(answers[i]===null?"لم تتم الإجابة":q.o[answers[i]]);let correct=document.createElement("p");correct.textContent="الإجابة الصحيحة: "+q.o[q.a];let why=document.createElement("p");why.textContent="التوضيح: "+q.why;let tag=document.createElement("span");tag.className="tag "+(ok?"good":"bad");tag.textContent=ok?"إجابة صحيحة":"إجابة غير صحيحة";box.append(h,tag,yours,correct,why);$("reviewList").append(box);});
+}
+$("restartBtn").onclick=()=>{answers=Array(questions.length).fill(null);current=0;submitted=false;score=0;$("studentLabel").textContent="الطالب: "+student;show("exam");render();};
+</script>
+</body>
+</html>
